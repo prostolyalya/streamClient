@@ -64,6 +64,7 @@ void Client::connecting()
         emit connectSender();
         receiver.get()->connecting();
         emit messageReceived("Connected to server");
+        emit requestFileList();
     }
     else
     {
@@ -119,7 +120,7 @@ void Client::fileSent(qint64 size, QString fileName)
 {
     socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
     emit messageReceived("File sent: " + fileName.toUtf8());
-    emit requestFileList();
+    QTimer::singleShot(1000, this, &Client::requestFileList);
 }
 
 void Client::sendFile(QString path)
@@ -134,6 +135,5 @@ void Client::sendFile(QString path)
 
 void Client::requestFileList()
 {
-    QByteArray data = "request_list_file";
-    socket.get()->write(data);
+    QTimer::singleShot(1000, this, [this](){socket.get()->write("request_list_file");});
 }

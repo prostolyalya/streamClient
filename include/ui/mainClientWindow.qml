@@ -51,10 +51,9 @@ ApplicationWindow
 
 //            highlight: Rectangle { color: "lightsteelblue"; radius: 1 }
             focus: true
-            delegate: Row{
+            delegate: Rectangle{
                 width: parent.width
                 height: 20
-                spacing: 5
                 Text{
                     text: modelData
                 }
@@ -63,7 +62,6 @@ ApplicationWindow
                     anchors.fill: parent
                     onDoubleClicked:
                     {
-                        console.log("click")
                         uiController.requestFile(modelData)
                     }
                 }

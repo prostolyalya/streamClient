@@ -16,7 +16,7 @@ void Receiver::slotRead()
 {
     while (socket->bytesAvailable() > 0)
     {
-        QByteArray data = socket->readAll();
+        QByteArray data = socket.get()->readAll();
         QFile file(tmp_path);
         file.open(QIODevice::Append | QIODevice::WriteOnly);
         file.write(data);

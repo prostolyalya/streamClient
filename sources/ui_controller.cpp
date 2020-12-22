@@ -20,6 +20,7 @@ void UiController::responceFileList(QStringList list)
     listFiles.clear();
     list.removeAt(0);
     listFiles = list;
+    emit listFilesChanged();
 }
 
 QString UiController::getText() const

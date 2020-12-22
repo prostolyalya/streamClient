@@ -41,13 +41,14 @@ void Client::saveFile()
         }
         if (file.open(QFile::ReadOnly))
         {
-            file.rename(current_path + fileName);
+            QFile::copy(current_path + "tmp", current_path + fileName);
             emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
         }
         else
         {
             emit messageReceived("Error receive file!");
         }
+        file.close();
         receiver->file_size = 0;
         receiver.get()->clearTmpFile();
         sizeFile = 0;
@@ -57,7 +58,7 @@ void Client::saveFile()
 void Client::connecting()
 {
     socket.get()->reset();
-    socket.get()->connectToHost("192.168.0.103", 6000);
+    socket.get()->connectToHost("192.168.0.102", 6000);
     socket->waitForConnected(3000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
@@ -86,13 +87,14 @@ void Client::slotRead()
         QByteArray array = socket->readAll();
         if (array.startsWith("end_of_file"))
         {
+            qDebug() << "end of file";
             QByteArrayList list = array.split('/');
             QByteArray data = list.at(1);
             fileName = list.at(2);
             sizeFile = data.toInt();
             QTimer::singleShot(1000, this, &Client::saveFile);
         }
-        else if(array.startsWith("response_list_file"))
+        else if (array.startsWith("response_list_file"))
         {
             QByteArrayList list = array.split('&');
             QString data = list.at(1);
@@ -135,5 +137,5 @@ void Client::sendFile(QString path)
 
 void Client::requestFileList()
 {
-    QTimer::singleShot(1000, this, [this](){socket.get()->write("request_list_file");});
+    QTimer::singleShot(1000, this, [this]() { socket.get()->write("request_list_file"); });
 }

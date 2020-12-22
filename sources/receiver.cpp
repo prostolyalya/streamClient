@@ -10,18 +10,26 @@ Receiver::Receiver(QString path, QObject *parent)
     socket = std::make_unique<QTcpSocket>();
     connect(socket.get(), &QTcpSocket::readyRead, this, &Receiver::slotRead);
     connect(socket.get(), &QTcpSocket::disconnected, this, &Receiver::slotDisconnected);
+    file = std::make_unique<QFile>(tmp_path);
+    file.get()->open(QIODevice::Append | QIODevice::WriteOnly);
+    file->resize(0);
+}
+
+Receiver::~Receiver()
+{
+    file.get()->close();
+    file.get()->remove();
 }
 
 void Receiver::slotRead()
 {
     while (socket->bytesAvailable() > 0)
     {
-        QByteArray data = socket.get()->readAll();
-        QFile file(tmp_path);
-        file.open(QIODevice::Append | QIODevice::WriteOnly);
-        file.write(data);
-        file.close();
-        file_size = file.size();
+        QByteArray data = "";
+        data = socket.get()->readAll();
+
+        file.get()->write(data);
+        file_size = file.get()->size();
     }
 }
 
@@ -34,11 +42,10 @@ void Receiver::slotDisconnected()
 void Receiver::connecting()
 {
     socket->reset();
-    socket->connectToHost("192.168.0.103", 6001);
+    socket->connectToHost("192.168.0.102", 6001);
 }
 
 void Receiver::clearTmpFile()
 {
-    QFile file(tmp_path);
-    file.remove();
+    file->resize(0);
 }

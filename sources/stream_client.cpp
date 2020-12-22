@@ -21,7 +21,7 @@ void StreamClient::init(QString login, QString pass)
             Qt::QueuedConnection);
     connect(uiController.get(), &UiController::requestFileList, client.get(), &Client::requestFileList,
             Qt::QueuedConnection);
-    connect(this, &StreamClient::initClient, client.get(), &Client::init);
+    connect(this, &StreamClient::initClient, client.get(), &Client::init, Qt::QueuedConnection);
     connect(uiController.get(), &UiController::sendText, client.get(), &Client::sendMessage,
             Qt::QueuedConnection);
     connect(client.get(), &Client::messageReceived, uiController.get(), &UiController::addText,

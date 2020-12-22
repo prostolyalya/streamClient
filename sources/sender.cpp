@@ -27,7 +27,7 @@ void Sender::setFile_path(const QString &value)
 void Sender::connecting()
 {
     socket->reset();
-    socket->connectToHost("192.168.0.103", 6002);
+    socket->connectToHost("192.168.0.102", 6002);
 }
 
 void Sender::sendFile()
@@ -35,12 +35,12 @@ void Sender::sendFile()
     QFile file(file_path);
     if (file.open(QFile::ReadOnly))
     {
-        int size = 64;
-        for (int pos = 0; pos < file.size(); pos += 64)
+        int size = 1024;
+        for (int pos = 0; pos < file.size(); pos += 1024)
         {
             file.seek(pos);
             QByteArray data = file.read(size);
-            while (socket->waitForBytesWritten(100))
+            while (socket->waitForReadyRead(5))
             {
             }
             socket->write(data);

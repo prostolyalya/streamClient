@@ -34,7 +34,7 @@ void Receiver::slotDisconnected()
 void Receiver::connecting()
 {
     socket->reset();
-    socket->connectToHost("192.168.0.102", 6001);
+    socket->connectToHost("192.168.0.103", 6001);
 }
 
 void Receiver::clearTmpFile()

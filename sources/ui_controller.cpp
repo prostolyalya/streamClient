@@ -15,6 +15,13 @@ void UiController::addText(QString text)
     emit textServerChanged();
 }
 
+void UiController::responceFileList(QStringList list)
+{
+    listFiles.clear();
+    list.removeAt(0);
+    listFiles = list;
+}
+
 QString UiController::getText() const
 {
     return textServer;
@@ -23,5 +30,25 @@ QString UiController::getText() const
 void UiController::setText(const QString &value)
 {
     textServer = value;
+}
+
+QStringList UiController::getListFiles() const
+{
+    return listFiles;
+}
+
+void UiController::setListFiles(const QStringList &value)
+{
+    listFiles = value;
+}
+
+QString UiController::getFileName(int index)
+{
+    return listFiles.at(index);
+}
+
+int UiController::getFilesSize() const
+{
+    return listFiles.size();
 }
 

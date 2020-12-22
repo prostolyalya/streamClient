@@ -41,19 +41,23 @@ void Client::saveFile()
         }
         if (file.open(QFile::ReadOnly))
         {
-
             file.rename(current_path + fileName);
-            receiver->file_size = 0;
             emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
         }
+        else
+        {
+            emit messageReceived("Error receive file!");
+        }
+        receiver->file_size = 0;
         receiver.get()->clearTmpFile();
+        sizeFile = 0;
     }
 }
 
 void Client::connecting()
 {
     socket.get()->reset();
-    socket.get()->connectToHost("192.168.0.102", 6000);
+    socket.get()->connectToHost("192.168.0.103", 6000);
     socket->waitForConnected(3000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
@@ -87,9 +91,22 @@ void Client::slotRead()
             sizeFile = data.toInt();
             QTimer::singleShot(1000, this, &Client::saveFile);
         }
+        else if(array.startsWith("response_list_file"))
+        {
+            QByteArrayList list = array.split('&');
+            QString data = list.at(1);
+            QStringList listNames = data.split('/');
+            emit responseFileList(listNames);
+        }
         else
             emit messageReceived("From server:" + array);
     }
+}
+
+void Client::requestFile(QString file_name)
+{
+    QByteArray data = "request_file/" + file_name.toUtf8();
+    socket->write(data);
 }
 
 void Client::slotServerDisconnected()
@@ -102,6 +119,7 @@ void Client::fileSent(qint64 size, QString fileName)
 {
     socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
     emit messageReceived("File sent: " + fileName.toUtf8());
+    emit requestFileList();
 }
 
 void Client::sendFile(QString path)
@@ -112,4 +130,10 @@ void Client::sendFile(QString path)
     emit sendFileSignal();
     //    auto f = std::bind(&Sender::sendFileSignal, sender.get());
     //    ThreadPool::getInstance()->addToThread(f);
+}
+
+void Client::requestFileList()
+{
+    QByteArray data = "request_list_file";
+    socket.get()->write(data);
 }

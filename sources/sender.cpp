@@ -27,7 +27,7 @@ void Sender::setFile_path(const QString &value)
 void Sender::connecting()
 {
     socket->reset();
-    socket->connectToHost("192.168.0.102", 6002);
+    socket->connectToHost("192.168.0.103", 6002);
 }
 
 void Sender::sendFile()

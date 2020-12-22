@@ -1,14 +1,14 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Dialogs 1.3
+import QtQml.Models 2.15
 
 ApplicationWindow
 {
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 800
     title: qsTr("Client")
-
     Text {
         id: mainText
         anchors.top: parent.top
@@ -38,16 +38,50 @@ ApplicationWindow
     }
     Rectangle
     {
+        anchors.top: mainInput.bottom
+        anchors.left: mainInput.left
+        anchors.topMargin: 20
+        id: clientFiles
+        width: 300
+        height: 200
+        ListView
+        {
+            anchors.fill: parent
+            model: uiController.uiListFiles
+
+//            highlight: Rectangle { color: "lightsteelblue"; radius: 1 }
+            focus: true
+            delegate: Row{
+                width: parent.width
+                height: 20
+                spacing: 5
+                Text{
+                    text: modelData
+                }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onDoubleClicked:
+                    {
+                        console.log("click")
+                        uiController.requestFile(modelData)
+                    }
+                }
+            }
+        }
+    }
+    Rectangle
+    {
        id: buttonSend
        anchors.top: mainInput.top
        anchors.left: mainInput.right
-       width: 50
+       width: 80
        height: 20
        border.width: 1
        border.color: "yellow"
        Text {
            anchors.centerIn: parent
-           text: qsTr("Send")
+           text: qsTr("Send text")
        }
        anchors.rightMargin: 10
        MouseArea
@@ -63,6 +97,7 @@ ApplicationWindow
     }
     Rectangle
     {
+       id: sendFileButton
        anchors.top: buttonSend.bottom
        anchors.left: buttonSend.left
        anchors.topMargin: 20
@@ -84,6 +119,30 @@ ApplicationWindow
                 mainInput.text = ""
             }
 
+       }
+    }
+    Rectangle
+    {
+       anchors.top: sendFileButton.bottom
+       anchors.left: sendFileButton.left
+       anchors.topMargin: 200
+       anchors.rightMargin: 10
+       width: 140
+       height: 30
+       border.width: 1
+       border.color: "yellow"
+       Text {
+           anchors.centerIn: parent
+           text: qsTr("Refresh my files")
+       }
+
+       MouseArea
+       {
+            anchors.fill: parent
+            onClicked:
+            {
+                uiController.requestFileList()
+            }
        }
     }
     FileDialog {

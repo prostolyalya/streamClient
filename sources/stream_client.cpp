@@ -17,10 +17,16 @@ void StreamClient::init(QString login, QString pass)
 {
     engine.load(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
     client = std::make_unique<Client>(0);
-    connect(this, &StreamClient::initClient, client.get(), &Client::init, Qt::QueuedConnection);
+    connect(uiController.get(), &UiController::requestFile, client.get(), &Client::requestFile,
+            Qt::QueuedConnection);
+    connect(uiController.get(), &UiController::requestFileList, client.get(), &Client::requestFileList,
+            Qt::QueuedConnection);
+    connect(this, &StreamClient::initClient, client.get(), &Client::init);
     connect(uiController.get(), &UiController::sendText, client.get(), &Client::sendMessage,
             Qt::QueuedConnection);
     connect(client.get(), &Client::messageReceived, uiController.get(), &UiController::addText,
+            Qt::QueuedConnection);
+    connect(client.get(), &Client::responseFileList, uiController.get(), &UiController::responceFileList,
             Qt::QueuedConnection);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile,
             Qt::QueuedConnection);

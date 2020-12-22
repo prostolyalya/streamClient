@@ -15,12 +15,10 @@ public:
     Client(int id, QObject* parent = nullptr);
     ~Client();
 
-
 private:
     std::unique_ptr<QTcpSocket> socket;
     int id = 0;
     qint64 sizeFile = 0;
-    std::unique_ptr<Sender> sender;
     std::unique_ptr<Receiver> receiver;
 
     QString current_path;
@@ -31,6 +29,7 @@ private:
 public:
     void connecting();
 
+    std::unique_ptr<Sender> sender;
 public slots:
     void slotRead();
     void slotServerDisconnected();
@@ -39,6 +38,7 @@ public slots:
     void init();
     void sendMessage(QString text);
 signals:
+    void connectSender();
     void sendFileSignal();
     void clientDisconnect(int id);
     void messageReceived(QByteArray msg);

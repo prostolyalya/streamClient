@@ -4,7 +4,16 @@ Client::Client(int id, QObject *parent)
     : QObject(parent)
     , id(id)
 {
-
+    socket = std::make_unique<QTcpSocket>();
+    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
+    QDir().mkdir(current_path);
+    connect(socket.get(), &QTcpSocket::readyRead, this, &Client::slotRead);
+    connect(socket.get(), &QTcpSocket::disconnected, this, &Client::slotServerDisconnected);
+    sender = std::make_unique<Sender>();
+    receiver = std::make_unique<Receiver>(current_path + "tmp");
+    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent, Qt::QueuedConnection);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
+    connect(this, &Client::connectSender, sender.get(), &Sender::connecting);
 }
 
 Client::~Client()
@@ -15,7 +24,6 @@ void Client::sendMessage(QString text)
 {
     socket->write(text.toUtf8());
 }
-
 
 void Client::saveFile()
 {
@@ -36,8 +44,7 @@ void Client::saveFile()
 
             file.rename(current_path + fileName);
             receiver->file_size = 0;
-            emit messageReceived("File received: " + current_path.toUtf8()
-                                 + fileName.toUtf8());
+            emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
         }
         receiver.get()->clearTmpFile();
     }
@@ -46,11 +53,11 @@ void Client::saveFile()
 void Client::connecting()
 {
     socket.get()->reset();
-    socket.get()->connectToHost(QHostAddress::LocalHost, 6000);
+    socket.get()->connectToHost("192.168.0.102", 6000);
     socket->waitForConnected(3000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
-        sender.get()->connecting();
+        emit connectSender();
         receiver.get()->connecting();
         emit messageReceived("Connected to server");
     }
@@ -63,15 +70,7 @@ void Client::connecting()
 
 void Client::init()
 {
-    socket = std::make_unique<QTcpSocket>();
-    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
-    QDir().mkdir(current_path);
-    connect(socket.get(), &QTcpSocket::readyRead, this, &Client::slotRead);
-    connect(socket.get(), &QTcpSocket::disconnected, this, &Client::slotServerDisconnected);
-    sender = std::make_unique<Sender>();
-    receiver = std::make_unique<Receiver>(current_path + "tmp");
-    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent, Qt::QueuedConnection);
-    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
+
     connecting();
 }
 
@@ -111,6 +110,6 @@ void Client::sendFile(QString path)
     emit messageReceived("Send file: " + path.toUtf8());
     sender.get()->setFile_path(path);
     emit sendFileSignal();
-//    auto f = std::bind(&Sender::sendFileSignal, sender.get());
-//    ThreadPool::getInstance()->addToThread(f);
+    //    auto f = std::bind(&Sender::sendFileSignal, sender.get());
+    //    ThreadPool::getInstance()->addToThread(f);
 }

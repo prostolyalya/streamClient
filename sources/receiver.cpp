@@ -3,8 +3,8 @@
 #include <QHostAddress>
 
 Receiver::Receiver(QString path, QObject *parent)
-    : QObject(parent),
-      tmp_path(path)
+    : QObject(parent)
+    , tmp_path(path)
 
 {
     socket = std::make_unique<QTcpSocket>();
@@ -18,7 +18,7 @@ void Receiver::slotRead()
     {
         QByteArray data = socket->readAll();
         QFile file(tmp_path);
-        file.open(QIODevice::Append|QIODevice::WriteOnly);
+        file.open(QIODevice::Append | QIODevice::WriteOnly);
         file.write(data);
         file.close();
         file_size = file.size();
@@ -31,11 +31,10 @@ void Receiver::slotDisconnected()
     socket->deleteLater();
 }
 
-
 void Receiver::connecting()
 {
     socket->reset();
-    socket->connectToHost(QHostAddress::LocalHost, 6001);
+    socket->connectToHost("192.168.0.102", 6001);
 }
 
 void Receiver::clearTmpFile()
@@ -43,4 +42,3 @@ void Receiver::clearTmpFile()
     QFile file(tmp_path);
     file.remove();
 }
-

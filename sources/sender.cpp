@@ -24,15 +24,10 @@ void Sender::setFile_path(const QString &value)
     file_path = value;
 }
 
-void Sender::connecting(QHostAddress host)
+void Sender::connecting()
 {
     socket->reset();
-    socket->connectToHost(host, 6002);
-}
-
-void Sender::init()
-{
-
+    socket->connectToHost("192.168.0.102", 6002);
 }
 
 void Sender::sendFile()
@@ -45,13 +40,14 @@ void Sender::sendFile()
         {
             file.seek(pos);
             QByteArray data = file.read(size);
-
+            while (socket->waitForBytesWritten(100))
+            {
+            }
             socket->write(data);
         }
     }
     QStringList list = file_path.split('/');
-    QString name = list.at(list.size()-1);
+    QString name = list.at(list.size() - 1);
     emit fileSent(file.size(), name);
     qDebug() << file.size();
 }
-

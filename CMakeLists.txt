@@ -22,9 +22,9 @@ set(SRC_LIST
     "sources/sender.cpp"
     "sources/ui_controller.cpp"
     "sources/stream_client.cpp"
-    "sources/db_connector.cpp"
     "sources/cryptor.cpp"
     "sources/serializer.cpp"
+    "sources/authentificator.cpp"
 )
 set(HDRS_LIST
     "include/headers/thread_pool.h"
@@ -33,12 +33,12 @@ set(HDRS_LIST
     "include/headers/receiver.h"
     "include/headers/stream_client.h"
     "include/headers/ui_controller.h"
-    "include/headers/db_connector.h"
     "include/headers/cryptor.h"
     "include/headers/serializer.h"
+    "include/headers/authentificator.h"
     "qml.qrc"
 )
-find_package(Qt5 COMPONENTS Core Network Qml Quick Widgets Sql REQUIRED)
+find_package(Qt6 COMPONENTS Core Network Qml Quick Widgets REQUIRED)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
 #include_directories(${Boost_INCLUDE_DIR})
@@ -49,5 +49,5 @@ add_executable(streamClient
 )
 target_compile_definitions(streamClient
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamClient Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Sql )#${Boost_LIBRARIES}
+target_link_libraries(streamClient Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets)#${Boost_LIBRARIES}
 target_include_directories(streamClient PUBLIC include)

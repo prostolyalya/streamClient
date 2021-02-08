@@ -13,7 +13,6 @@ class Client : public QObject
     Q_OBJECT
 public:
     Client(int id, QObject* parent = nullptr);
-    ~Client();
 
 private:
     std::unique_ptr<QTcpSocket> socket;

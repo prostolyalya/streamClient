@@ -23,6 +23,27 @@ void UiController::responceFileList(QStringList list)
     emit listFilesChanged();
 }
 
+void UiController::registrationComplete()
+{
+
+}
+
+void UiController::loginError()
+{
+    errorText = "X";
+    emit errorTextChanged();
+}
+
+QString UiController::getErrorText() const
+{
+    return errorText;
+}
+
+void UiController::setErrorText(const QString &value)
+{
+    errorText = value;
+}
+
 QString UiController::getText() const
 {
     return textServer;

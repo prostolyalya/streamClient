@@ -13,11 +13,7 @@ Client::Client(int id, QObject *parent)
     receiver = std::make_unique<Receiver>(current_path + "tmp");
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent, Qt::QueuedConnection);
     connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
-    connect(this, &Client::connectSender, sender.get(), &Sender::connecting);
-}
-
-Client::~Client()
-{
+    connect(this, &Client::connectSender, sender.get(), &Sender::connecting, Qt::QueuedConnection);
 }
 
 void Client::sendMessage(QString text)
@@ -58,7 +54,7 @@ void Client::saveFile()
 void Client::connecting()
 {
     socket.get()->reset();
-    socket.get()->connectToHost("192.168.0.102", 6000);
+    socket.get()->connectToHost(QHostAddress::LocalHost, 6000);
     socket->waitForConnected(3000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
@@ -76,7 +72,6 @@ void Client::connecting()
 
 void Client::init()
 {
-
     connecting();
 }
 
@@ -137,5 +132,5 @@ void Client::sendFile(QString path)
 
 void Client::requestFileList()
 {
-    QTimer::singleShot(1000, this, [this]() { socket.get()->write("request_list_file"); });
+    QTimer::singleShot(1000, this, [this]() { sendMessage("request_list_file"); });
 }

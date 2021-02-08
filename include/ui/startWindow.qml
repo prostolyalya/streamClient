@@ -1,6 +1,6 @@
-import QtQuick 2.12
+import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Controls.Styles 1.4
+
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
@@ -33,13 +33,24 @@ ApplicationWindow
 
     Text
     {
+        id: titleText
         anchors.left: textLogin.left
         anchors.leftMargin: -10
         anchors.top: parent.top
         font.family: "Helvetica"
         font.pointSize: 18
         color: "yellow"
-        text: qsTr("Client")
+        text: qsTr("Login")
+    }
+    Text {
+        id: errorText
+        text: uiController.uiError
+        font.bold: true
+        font.pixelSize: 24
+        color: "red"
+        anchors.right: titleText.left
+        anchors.top: titleText.top
+        anchors.rightMargin: 5
     }
     Text
     {
@@ -62,7 +73,7 @@ ApplicationWindow
         anchors.topMargin: 40
         width: 100
         height: 35
-        validator: RegExpValidator { regExp: /^[a-z0-9]+$/i }
+        validator: RegularExpressionValidator { regularExpression: /^[a-z0-9]+$/i }
     }
     Text
     {
@@ -83,7 +94,7 @@ ApplicationWindow
         anchors.topMargin: 30
         width: 100
         height: 35
-        validator: RegExpValidator { regExp: /^[a-z0-9]+$/i }
+        validator: RegularExpressionValidator { regularExpression: /^[a-z0-9]+$/i }
     }
 
     Rectangle
@@ -91,7 +102,7 @@ ApplicationWindow
         border.color: "yellow"
         border.width: 1
         anchors.top: textPass.bottom
-        anchors.left: textPass.left
+        anchors.right: textPass.right
         anchors.topMargin: 30
         color: "gray"
         width: 55
@@ -113,8 +124,10 @@ ApplicationWindow
                 }
                 else
                 {
-                    uiController.init(textLogin.text , textPass.text)
-                    logPassWindow.close()
+                    if(titleText.text === "Login")
+                        uiController.login(textLogin.text , textPass.text)
+                    else
+                        uiController.registration(textLogin.text , textPass.text)
                 }
 
             }
@@ -122,11 +135,11 @@ ApplicationWindow
     }
     Rectangle
     {
-        width: 20
+        width: 80
         height: 20
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.leftMargin: 5
+        anchors.leftMargin: 20
         anchors.bottomMargin: 5
         border.color: "white"
         border.width: 1
@@ -135,17 +148,17 @@ ApplicationWindow
             anchors.centerIn: parent
             color: "yellow"
             font.bold: true
-            text: qsTr("<")
+            text: qsTr("Reg/Login")
         }
         MouseArea
         {
             anchors.fill: parent
             onClicked:
             {
-                textLogin.text = ""
-                textPass.text = ""
-                logPassWindow.close()
-                startWindow.show()
+                if(titleText.text === "Login")
+                    titleText.text = "Registration"
+                else
+                    titleText.text = "Login"
             }
         }
     }

@@ -6,6 +6,7 @@
 #include "ui_controller.h"
 #include <QTcpSocket>
 #include <QQmlApplicationEngine>
+#include "authentificator.h"
 #include "thread_pool.h"
 class StreamClient : public QObject
 {
@@ -15,9 +16,10 @@ public:
     ~StreamClient();
 
     std::shared_ptr<UiController> getUiController() const;
-    static bool checkClient(QString username, QString password);
+
 public slots:
-    void init(QString login, QString pass);
+    void checkClient(QString username, QString password);
+    void regClient(QString username, QString password);
 private:
     QQmlApplicationEngine &engine;
     std::unique_ptr<Client> client;
@@ -25,8 +27,11 @@ private:
     std::shared_ptr<UiController> uiController;
     const QString host = "192.168.0.102";
 
+    void init();
 signals:
     void initClient();
+    void loginComplete();
+    void errorLogin();
 };
 
 #endif // STREAMCLIENT_H

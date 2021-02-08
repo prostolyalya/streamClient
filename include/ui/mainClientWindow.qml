@@ -1,6 +1,6 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-import QtQuick.Dialogs 1.3
+import QtQuick 2.12
+import QtQuick.Controls 2.15
+import Qt.labs.platform 1.1
 import QtQml.Models 2.15
 
 ApplicationWindow
@@ -9,53 +9,90 @@ ApplicationWindow
     width: 800
     height: 800
     title: qsTr("Client")
+    Component.onCompleted: startWindow.close()
     Text {
         id: mainText
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.leftMargin: 150
+        anchors.leftMargin: 100
         anchors.topMargin: 30
-        text: qsTr("Client")
-    }
-    TextArea
-    {
-        anchors.top: mainText.bottom
-        anchors.left: mainText.left
-        id: mainTextArea
-        width: 300
-        height: 200
-        text: uiController.uiText
-    }
-
-    TextArea
-    {
-        anchors.top: mainTextArea.bottom
-        anchors.left: mainTextArea.left
-        anchors.topMargin: 20
-        id: mainInput
-        width: 300
-        height: 200
+        text: qsTr("Information:")
     }
     Rectangle
     {
-        anchors.top: mainInput.bottom
-        anchors.left: mainInput.left
-        anchors.topMargin: 20
-        id: clientFiles
+        id: mainTextArea
+        anchors.top: mainText.bottom
+        anchors.left: mainText.left
+        width: 500
+        height: 200
+        border.color: "black"
+        border.width: 1
+        color: "#D9DDDC"
+        Flickable
+        {
+            anchors.fill: parent
+            TextArea.flickable: TextArea
+            {
+                text: uiController.uiText
+                color: "#311432"
+                wrapMode: TextArea.Wrap
+            }
+            ScrollBar.vertical: ScrollBar { }
+        }
+    }
+    Rectangle
+    {
+        id: mainInput
+        anchors.top: mainTextArea.bottom
+        anchors.left: mainTextArea.left
+        anchors.topMargin: 40
         width: 300
         height: 200
+        border.color: "black"
+        border.width: 1
+        color: "#D9DDDC"
+        Flickable
+        {
+            anchors.fill: parent
+            TextArea.flickable: TextArea
+            {
+                id: mainInputText
+                color: "#311432"
+                wrapMode: TextArea.Wrap
+            }
+            ScrollBar.vertical: ScrollBar { }
+        }
+    }
+    Text {
+        anchors.bottom: mainInput.top
+        anchors.left: mainInput.left
+        text: qsTr("Message:")
+    }
+    Rectangle
+    {
+        id: clientFiles
+        anchors.top: mainInput.bottom
+        anchors.left: mainInput.left
+        anchors.topMargin: 40
+        width: 500
+        height: 200
+        color: "#D9DDDC"
+        border.width: 1
+        border.color: "black"
         ListView
         {
             anchors.fill: parent
             model: uiController.uiListFiles
-
-//            highlight: Rectangle { color: "lightsteelblue"; radius: 1 }
             focus: true
             delegate: Rectangle{
                 width: parent.width
                 height: 20
+                border.color: "black"
+                color: "#95C8D8"
                 Text{
                     text: modelData
+                    anchors.centerIn: parent
+                    color: "#311432"
                 }
                 MouseArea
                 {
@@ -68,15 +105,22 @@ ApplicationWindow
             }
         }
     }
+    Text {
+        anchors.bottom: clientFiles.top
+        anchors.left: clientFiles.left
+        text: qsTr("Files:")
+    }
     Rectangle
     {
-       id: buttonSend
+       id: buttonSendText
        anchors.top: mainInput.top
        anchors.left: mainInput.right
+       anchors.leftMargin: 5
        width: 80
        height: 20
+       color: "yellow"
        border.width: 1
-       border.color: "yellow"
+       border.color: "black"
        Text {
            anchors.centerIn: parent
            text: qsTr("Send text")
@@ -87,8 +131,8 @@ ApplicationWindow
             anchors.fill: parent
             onClicked:
             {
-                uiController.sendText(mainInput.text)
-                mainInput.text = ""
+                uiController.sendText(mainInputText.text)
+                mainInputText.text = ""
             }
 
        }
@@ -96,13 +140,14 @@ ApplicationWindow
     Rectangle
     {
        id: sendFileButton
-       anchors.top: buttonSend.bottom
-       anchors.left: buttonSend.left
+       anchors.top: buttonSendText.bottom
+       anchors.left: buttonSendText.left
        anchors.topMargin: 20
        width: 80
        height: 20
+       color: "yellow"
        border.width: 1
-       border.color: "yellow"
+       border.color: "black"
        Text {
            anchors.centerIn: parent
            text: qsTr("Send file")
@@ -114,21 +159,21 @@ ApplicationWindow
             onClicked:
             {
                 fileDialog.open()
-                mainInput.text = ""
+                mainInputText.text = ""
             }
 
        }
     }
     Rectangle
     {
-       anchors.top: sendFileButton.bottom
-       anchors.left: sendFileButton.left
-       anchors.topMargin: 200
-       anchors.rightMargin: 10
+       anchors.top: clientFiles.top
+       anchors.left: clientFiles.right
+       anchors.leftMargin: 5
        width: 140
        height: 30
+       color: "yellow"
        border.width: 1
-       border.color: "yellow"
+       border.color: "black"
        Text {
            anchors.centerIn: parent
            text: qsTr("Refresh my files")
@@ -146,10 +191,9 @@ ApplicationWindow
     FileDialog {
         id: fileDialog
         title: "Please choose a file"
-        selectMultiple: false
         onAccepted: {
-            console.log("You chose: " + fileDialog.fileUrl)
-            uiController.sendFile(fileDialog.fileUrl)
+            console.log("You chose: " + fileDialog.currentFile)
+            uiController.sendFile(fileDialog.currentFile)
         }
         onRejected: {
             fileDialog.close()

@@ -52,24 +52,41 @@ std::shared_ptr<UiController> StreamClient::getUiController() const
 void StreamClient::checkClient(QString username, QString password)
 {
     auto error = Authentificate::checkLogin(username, password);
-    if (error == Authentificate::NO_ERROR)
+    switch (error)
     {
+    case Authentificate::Error::NO_ERROR:
         emit loginComplete();
         init();
+        break;
+    case Authentificate::Error::INCORRECT_LOGIN:
+        emit errorLogin("Incorrect login or password");
+        break;
+    case Authentificate::Error::NAME_USED:
+        emit errorLogin("Undefined");
+        break;
+    case Authentificate::Error::NO_CONNECTION:
+        emit errorLogin("Can`t connect to server 0_o, try later");
+        break;
     }
-    else
-        emit errorLogin();
 }
 
 void StreamClient::regClient(QString username, QString password)
 {
     auto error = Authentificate::checkName(username, password);
-    if (error == Authentificate::NO_ERROR)
+    switch (error)
     {
+    case Authentificate::Error::NO_ERROR:
         emit loginComplete();
         init();
+        break;
+    case Authentificate::Error::INCORRECT_LOGIN:
+        emit errorLogin("Undefined");
+        break;
+    case Authentificate::Error::NAME_USED:
+        emit errorLogin("This name is used, try with Xx_xX");
+        break;
+    case Authentificate::Error::NO_CONNECTION:
+        emit errorLogin("Can`t connect to server 0_o, try later");
+        break;
     }
-    else
-        emit errorLogin();
-
 }

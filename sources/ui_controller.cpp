@@ -29,9 +29,9 @@ void UiController::registrationComplete()
     emit errorTextChanged();
 }
 
-void UiController::loginError()
+void UiController::loginError(QString error)
 {
-    errorText = "X";
+    errorText = error;
     emit errorTextChanged();
 }
 

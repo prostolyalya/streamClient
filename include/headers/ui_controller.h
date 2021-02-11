@@ -31,7 +31,7 @@ public slots:
     void addText(QString text);
     void responceFileList(QStringList list);
     void registrationComplete();
-    void loginError();
+    void loginError(QString error);
 signals:
     void textServerChanged();
     void errorTextChanged();

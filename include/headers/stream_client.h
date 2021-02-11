@@ -31,7 +31,7 @@ private:
 signals:
     void initClient();
     void loginComplete();
-    void errorLogin();
+    void errorLogin(QString error);
 };
 
 #endif // STREAMCLIENT_H

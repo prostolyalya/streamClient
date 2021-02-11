@@ -44,18 +44,13 @@ ApplicationWindow
     }
     Text {
         id: errorText
-        text: uiController.uiError
         font.bold: true
         font.pixelSize: 24
         color: "red"
         anchors.right: titleText.left
         anchors.top: titleText.top
         anchors.rightMargin: 5
-        onTextChanged:
-        {
-            if(uiController.uiError === "y")
-                logPassWindow.close()
-        }
+
     }
     Text
     {
@@ -125,7 +120,7 @@ ApplicationWindow
             {
                 if (!checkLogin() || !checkPassword())
                 {
-                    popup.open()
+                    uiController.loginError("Username lenght > 5 and < 20. Password lenght > 6 and < 32")
                 }
                 else
                 {
@@ -175,8 +170,16 @@ ApplicationWindow
         clip: true
 
         contentItem: Text {
+            id:popText
             wrapMode: Text.WordWrap
-            text: "Username lenght > 5 and < 20. Password lenght > 6 and < 32"
+            text: uiController.uiError
+            onTextChanged:
+            {
+                if(uiController.uiError === "y")
+                    logPassWindow.close()
+                errorText.text = "X"
+                popup.open()
+            }
         }
         modal: true
         focus: true

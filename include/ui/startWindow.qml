@@ -51,6 +51,11 @@ ApplicationWindow
         anchors.right: titleText.left
         anchors.top: titleText.top
         anchors.rightMargin: 5
+        onTextChanged:
+        {
+            if(uiController.uiError === "y")
+                logPassWindow.close()
+        }
     }
     Text
     {

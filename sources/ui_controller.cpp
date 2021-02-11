@@ -25,7 +25,8 @@ void UiController::responceFileList(QStringList list)
 
 void UiController::registrationComplete()
 {
-
+    errorText = "y";
+    emit errorTextChanged();
 }
 
 void UiController::loginError()

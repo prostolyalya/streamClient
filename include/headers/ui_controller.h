@@ -11,6 +11,7 @@ class UiController : public QObject
     Q_PROPERTY(QString uiText READ getText WRITE setText NOTIFY textServerChanged)
     Q_PROPERTY(QString uiError READ getErrorText WRITE setErrorText NOTIFY errorTextChanged)
     Q_PROPERTY(QStringList uiListFiles READ getListFiles WRITE setListFiles NOTIFY listFilesChanged)
+    Q_PROPERTY(QStringList uiListPublicFiles READ getListPublicFiles WRITE setListPublicFiles NOTIFY listPublicFilesChanged)
 public:
     UiController(QObject* parent = nullptr);
     ~UiController();
@@ -27,18 +28,22 @@ public:
     QString getErrorText() const;
     void setErrorText(const QString &value);
 
+    QStringList getListPublicFiles() const;
+    void setListPublicFiles(const QStringList &value);
+
 public slots:
     void addText(QString text);
-    void responceFileList(QStringList list);
+    void responceFileList(QStringList list, QStringList listPub);
     void registrationComplete();
     void loginError(QString error);
 signals:
     void textServerChanged();
     void errorTextChanged();
     void listFilesChanged();
+    void listPublicFilesChanged();
     void sendTextAllUsers(QString text);
     void sendText(QString text);
-    void sendFile(QString path);
+    void sendFile(QString path, bool isPrivate);
     void requestFile(QString fileName);
     void requestFileList();
     void init(QString login, QString pass);
@@ -48,6 +53,7 @@ private:
     QString textServer;
     QString errorText = "";
     QStringList listFiles {"Downloading..."};
+    QStringList listPublicFiles {"Downloading..."};
 };
 
 #endif // UI_CONTROLLER_H

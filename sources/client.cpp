@@ -8,12 +8,16 @@ Client::Client(int id, QObject *parent)
     current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
     QDir().mkdir(current_path);
     connect(socket.get(), &QTcpSocket::readyRead, this, &Client::slotRead);
-    connect(socket.get(), &QTcpSocket::disconnected, this, &Client::slotServerDisconnected);
+    connect(socket.get(), &QTcpSocket::disconnected, this,
+            &Client::slotServerDisconnected);
     sender = std::make_unique<Sender>();
     receiver = std::make_unique<Receiver>(current_path + "tmp");
-    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent, Qt::QueuedConnection);
-    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
-    connect(this, &Client::connectSender, sender.get(), &Sender::connecting, Qt::QueuedConnection);
+    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent,
+            Qt::QueuedConnection);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile,
+            Qt::QueuedConnection);
+    connect(this, &Client::connectSender, sender.get(), &Sender::connecting,
+            Qt::QueuedConnection);
 }
 
 void Client::sendMessage(QString text)
@@ -38,7 +42,8 @@ void Client::saveFile()
         if (file.open(QFile::ReadOnly))
         {
             QFile::copy(current_path + "tmp", current_path + fileName);
-            emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
+            emit messageReceived("File received: " + current_path.toUtf8()
+                                 + fileName.toUtf8());
         }
         else
         {
@@ -94,7 +99,13 @@ void Client::slotRead()
             QByteArrayList list = array.split('&');
             QString data = list.at(1);
             QStringList listNames = data.split('/');
-            emit responseFileList(listNames);
+            QStringList listPubNames;
+            if (list.size() > 2)
+            {
+                QString dataPub = list.at(2);
+                listPubNames = dataPub.split("//");
+            }
+            emit responseFileList(listNames, listPubNames);
         }
         else
             emit messageReceived("From server:" + array);
@@ -113,19 +124,20 @@ void Client::slotServerDisconnected()
     connecting();
 }
 
-void Client::fileSent(qint64 size, QString fileName)
+void Client::fileSent(qint64 size, QString fileName, bool isPrivate)
 {
-    socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8());
+    char priv = isPrivate ? '1' : '0';
+    socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8()
+                  + "/" + priv);
     emit messageReceived("File sent: " + fileName.toUtf8());
     QTimer::singleShot(1000, this, &Client::requestFileList);
 }
 
-void Client::sendFile(QString path)
+void Client::sendFile(QString path, bool isPrivate)
 {
     path = path.mid(7);
     emit messageReceived("Send file: " + path.toUtf8());
-    sender.get()->setFile_path(path);
-    emit sendFileSignal();
+    emit sendFileSignal(path, isPrivate);
     //    auto f = std::bind(&Sender::sendFileSignal, sender.get());
     //    ThreadPool::getInstance()->addToThread(f);
 }

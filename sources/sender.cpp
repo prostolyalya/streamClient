@@ -19,10 +19,6 @@ void Sender::discardSocket()
     socket->deleteLater();
 }
 
-void Sender::setFile_path(const QString &value)
-{
-    file_path = value;
-}
 
 void Sender::connecting()
 {
@@ -30,7 +26,7 @@ void Sender::connecting()
     socket->connectToHost(QHostAddress::LocalHost, 6002);
 }
 
-void Sender::sendFile()
+void Sender::sendFile(QString file_path, bool isPrivate)
 {
     QFile file(file_path);
     if (file.open(QFile::ReadOnly))
@@ -48,6 +44,6 @@ void Sender::sendFile()
     }
     QStringList list = file_path.split('/');
     QString name = list.at(list.size() - 1);
-    emit fileSent(file.size(), name);
+    emit fileSent(file.size(), name, isPrivate);
     qDebug() << file.size();
 }

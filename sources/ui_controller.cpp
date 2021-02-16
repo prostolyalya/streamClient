@@ -15,12 +15,16 @@ void UiController::addText(QString text)
     emit textServerChanged();
 }
 
-void UiController::responceFileList(QStringList list)
+void UiController::responceFileList(QStringList list, QStringList listPub)
 {
     listFiles.clear();
     list.removeAt(0);
     listFiles = list;
     emit listFilesChanged();
+    listPublicFiles.clear();
+    listPub.removeAt(0);
+    listPublicFiles = listPub;
+    emit listPublicFilesChanged();
 }
 
 void UiController::registrationComplete()
@@ -33,6 +37,16 @@ void UiController::loginError(QString error)
 {
     errorText = error;
     emit errorTextChanged();
+}
+
+QStringList UiController::getListPublicFiles() const
+{
+    return listPublicFiles;
+}
+
+void UiController::setListPublicFiles(const QStringList &value)
+{
+    listPublicFiles = value;
 }
 
 QString UiController::getErrorText() const

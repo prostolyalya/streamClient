@@ -33,16 +33,16 @@ public slots:
     void slotRead();
     void requestFile(QString file_name);
     void slotServerDisconnected();
-    void fileSent(qint64 size, QString fileName);
-    void sendFile(QString path);
+    void fileSent(qint64 size, QString fileName, bool isPrivate);
+    void sendFile(QString path, bool isPrivate);
     void init();
     void sendMessage(QString text);
 
     void requestFileList();
 signals:
-    void responseFileList(QStringList list);
+    void responseFileList(QStringList, QStringList);
     void connectSender();
-    void sendFileSignal();
+    void sendFileSignal(QString path, bool isPrivate);
     void clientDisconnect(int id);
     void messageReceived(QByteArray msg);
 };

@@ -7,15 +7,15 @@ ApplicationWindow
 {
     visible: true
     width: 800
-    height: 800
+    height: 1000
     title: qsTr("Client")
-    Component.onCompleted: startWindow.close()
+    property bool isPrivate : true
     Text {
         id: mainText
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 100
-        anchors.topMargin: 30
+        anchors.topMargin: 10
         text: qsTr("Information:")
     }
     Rectangle
@@ -45,7 +45,7 @@ ApplicationWindow
         id: mainInput
         anchors.top: mainTextArea.bottom
         anchors.left: mainTextArea.left
-        anchors.topMargin: 40
+        anchors.topMargin: 30
         width: 300
         height: 200
         border.color: "black"
@@ -73,7 +73,7 @@ ApplicationWindow
         id: clientFiles
         anchors.top: mainInput.bottom
         anchors.left: mainInput.left
-        anchors.topMargin: 40
+        anchors.topMargin: 30
         width: 500
         height: 200
         color: "#D9DDDC"
@@ -83,6 +83,48 @@ ApplicationWindow
         {
             anchors.fill: parent
             model: uiController.uiListFiles
+            focus: true
+            delegate: Rectangle{
+                width: parent.width
+                height: 20
+                border.color: "black"
+                color: "#95C8D8"
+                Text{
+                    text: modelData
+                    anchors.centerIn: parent
+                    color: "#311432"
+                }
+                MouseArea
+                {
+                    anchors.fill: parent
+                    onDoubleClicked:
+                    {
+                        uiController.requestFile(modelData)
+                    }
+                }
+            }
+        }
+    }
+    Text {
+        anchors.bottom: publicFiles.top
+        anchors.left: publicFiles.left
+        text: qsTr("Public files:")
+    }
+    Rectangle
+    {
+        id: publicFiles
+        anchors.top: clientFiles.bottom
+        anchors.left: clientFiles.left
+        anchors.topMargin: 40
+        width: 500
+        height: 200
+        color: "#D9DDDC"
+        border.width: 1
+        border.color: "black"
+        ListView
+        {
+            anchors.fill: parent
+            model: uiController.uiListPublicFiles
             focus: true
             delegate: Rectangle{
                 width: parent.width
@@ -143,14 +185,14 @@ ApplicationWindow
        anchors.top: buttonSendText.bottom
        anchors.left: buttonSendText.left
        anchors.topMargin: 20
-       width: 80
+       width: 150
        height: 20
        color: "yellow"
        border.width: 1
        border.color: "black"
        Text {
            anchors.centerIn: parent
-           text: qsTr("Send file")
+           text: qsTr("Send private file")
        }
        anchors.rightMargin: 10
        MouseArea
@@ -158,6 +200,35 @@ ApplicationWindow
             anchors.fill: parent
             onClicked:
             {
+                isPrivate = true
+                fileDialog.open()
+                mainInputText.text = ""
+            }
+
+       }
+    }
+    Rectangle
+    {
+       id: sendFileButton2
+       anchors.top: sendFileButton.bottom
+       anchors.left: sendFileButton.left
+       anchors.topMargin: 20
+       width: 150
+       height: 20
+       color: "yellow"
+       border.width: 1
+       border.color: "black"
+       Text {
+           anchors.centerIn: parent
+           text: qsTr("Send public file")
+       }
+       anchors.rightMargin: 10
+       MouseArea
+       {
+            anchors.fill: parent
+            onClicked:
+            {
+                isPrivate = false
                 fileDialog.open()
                 mainInputText.text = ""
             }
@@ -193,7 +264,7 @@ ApplicationWindow
         title: "Please choose a file"
         onAccepted: {
             console.log("You chose: " + fileDialog.currentFile)
-            uiController.sendFile(fileDialog.currentFile)
+            uiController.sendFile(fileDialog.currentFile, isPrivate)
         }
         onRejected: {
             fileDialog.close()

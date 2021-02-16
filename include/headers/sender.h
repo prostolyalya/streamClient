@@ -11,17 +11,15 @@ class Sender : public QObject
 public:
     Sender(QObject *parent = nullptr);
 
-    void setFile_path(const QString &value);
 public slots:
     void connecting();
     void readSocket();
     void discardSocket();
-    void sendFile();
+    void sendFile(QString file_path, bool isPrivate);
 signals:
-    void fileSent(qint64, QString);
+    void fileSent(qint64, QString, bool);
 
 private:
     std::unique_ptr<QTcpSocket> socket;
-    QString file_path = "";
 };
 #endif // SENDER_H

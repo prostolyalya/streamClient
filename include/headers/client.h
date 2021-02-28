@@ -12,11 +12,10 @@ class Client : public QObject
 {
     Q_OBJECT
 public:
-    Client(int id, QObject* parent = nullptr);
+    Client(QObject* parent = nullptr);
 
 private:
     std::unique_ptr<QTcpSocket> socket;
-    int id = 0;
     qint64 sizeFile = 0;
     std::unique_ptr<Receiver> receiver;
     QHostAddress address;

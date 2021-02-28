@@ -44,7 +44,7 @@ set(HDRS_LIST
     "include/headers/authentificator.h"
     "qml.qrc"
 )
-set(CMAKE_PREFIX_PATH "/home/main/Qt/5.15.0/gcc_64/lib/cmake")
+#set(CMAKE_PREFIX_PATH "/home/main/Qt/5.15.0/gcc_64/lib/cmake")
 find_package(Qt5 REQUIRED COMPONENTS Core Network Qml Quick MultimediaWidgets Multimedia)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)

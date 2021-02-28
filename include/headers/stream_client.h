@@ -15,7 +15,6 @@ class StreamClient : public QObject
     Q_OBJECT
 public:
     StreamClient(QQmlApplicationEngine&_engine,QObject *parent = nullptr);
-    ~StreamClient();
 
     std::shared_ptr<UiController> getUiController() const;
 

@@ -19,7 +19,7 @@ StreamClient::StreamClient(QQmlApplicationEngine& _engine, QObject* parent)
 void StreamClient::init()
 {
     engine.load(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
-    client = std::make_unique<Client>(0);
+    client = std::make_unique<Client>(this);
     client->setAddress(address);
 
     connect(uiController.get(), &UiController::requestFile, client.get(),

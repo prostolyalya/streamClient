@@ -44,8 +44,8 @@ set(HDRS_LIST
     "include/headers/authentificator.h"
     "qml.qrc"
 )
-set(CMAKE_PREFIX_PATH "/home/ykulevskyi/Qt/6.0.0/gcc_64/lib/cmake")
-find_package(Qt6 REQUIRED COMPONENTS Core Network Qml Quick Widgets)
+#set(CMAKE_PREFIX_PATH "/home/Qt/6.0.0/gcc_64/lib/cmake")
+find_package(Qt5 REQUIRED COMPONENTS Core Network Qml Quick Widgets Multimedia MultimediaWidgets)
 #find_package(Boost COMPONENTS thread system REQUIRED)
 #include_directories(include/lib/boost)
 #include_directories(${Boost_INCLUDE_DIR})
@@ -56,5 +56,5 @@ add_executable(streamClient
 )
 #target_compile_definitions(streamClient
 #  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamClient Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets)#${Boost_LIBRARIES}
+target_link_libraries(streamClient Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Multimedia Qt::MultimediaWidgets)#${Boost_LIBRARIES}
 target_include_directories(streamClient PUBLIC include)

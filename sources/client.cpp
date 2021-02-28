@@ -66,7 +66,7 @@ void Client::connecting()
         emit connectSender();
         receiver.get()->connecting();
         emit messageReceived("Connected to server");
-        emit requestFileList();
+        requestFileList();
     }
     else
     {

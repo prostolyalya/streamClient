@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.15
 import Qt.labs.platform 1.1
 import QtQml.Models 2.15
+import QtMultimedia 5.12
 
 ApplicationWindow
 {
@@ -237,6 +238,7 @@ ApplicationWindow
     }
     Rectangle
     {
+       id: buttonRefresh
        anchors.top: clientFiles.top
        anchors.left: clientFiles.right
        anchors.leftMargin: 5
@@ -259,6 +261,30 @@ ApplicationWindow
             }
        }
     }
+    Rectangle
+    {
+       anchors.top: buttonRefresh.bottom
+       anchors.left: buttonRefresh.left
+       anchors.topMargin: 5
+       width: 100
+       height: 30
+       color: "yellow"
+       border.width: 1
+       border.color: "black"
+       Text {
+           anchors.centerIn: parent
+           text: qsTr("->")
+       }
+
+       MouseArea
+       {
+            anchors.fill: parent
+            onClicked:
+            {
+                videoWindow.show()
+            }
+       }
+    }
     FileDialog {
         id: fileDialog
         title: "Please choose a file"
@@ -270,5 +296,67 @@ ApplicationWindow
             fileDialog.close()
         }
     }
+    ApplicationWindow {
+        id: videoWindow
+        width : 1000
+        height : 800
+        Rectangle
+        {
+            id: buttonChose
+           anchors.top: parent.top
+           anchors.left: parent.left
+           anchors.topMargin: 5
+           anchors.leftMargin: 5
+           width: 50
+           height: 50
+           color: "yellow"
+           border.width: 1
+           border.color: "black"
+           z:3
+           Text {
+               anchors.centerIn: parent
+               text: qsTr("-")
+           }
 
+           MouseArea
+           {
+                anchors.fill: parent
+                onClicked:
+                {
+                    fileDialogVideo.open()
+                }
+           }
+        }
+        Video {
+            id: video
+            anchors.fill: parent
+            z:2
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    video.playbackState === MediaPlayer.PlayingState ? video.pause() : video.play()
+                    video.playbackState === MediaPlayer.PlayingState ? buttonChose.visible = false: buttonChose.visible = true
+                }
+            }
+
+            focus: true
+            Keys.onSpacePressed: video.playbackState === MediaPlayer.PlayingState ? video.pause() : video.play()
+            Keys.onLeftPressed: video.seek(video.position - 5000)
+            Keys.onRightPressed: video.seek(video.position + 5000)
+        }
+        FileDialog {
+            id: fileDialogVideo
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogVideo.currentFile)
+                video.source = "file://" + fileDialogVideo.currentFile
+            }
+            onRejected: {
+                fileDialogVideo.close()
+            }
+        }
+    }
 }
+
+

@@ -11,6 +11,8 @@ class Sender : public QObject
 public:
     Sender(QObject *parent = nullptr);
 
+    void setAddress(const QHostAddress &value);
+
 public slots:
     void connecting();
     void readSocket();
@@ -21,5 +23,6 @@ signals:
 
 private:
     std::unique_ptr<QTcpSocket> socket;
+    QHostAddress address;
 };
 #endif // SENDER_H

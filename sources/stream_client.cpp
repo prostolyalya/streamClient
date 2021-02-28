@@ -13,16 +13,15 @@ StreamClient::StreamClient(QQmlApplicationEngine& _engine, QObject* parent)
             &UiController::loginError);
     connect(this, &StreamClient::loginComplete, uiController.get(),
             &UiController::registrationComplete);
-}
-
-StreamClient::~StreamClient()
-{
+    address = Authentificate::address;
 }
 
 void StreamClient::init()
 {
     engine.load(QStringLiteral("qrc:/include/ui/mainClientWindow.qml"));
     client = std::make_unique<Client>(0);
+    client->setAddress(address);
+
     connect(uiController.get(), &UiController::requestFile, client.get(),
             &Client::requestFile, Qt::QueuedConnection);
     connect(uiController.get(), &UiController::requestFileList, client.get(),
@@ -51,6 +50,7 @@ std::shared_ptr<UiController> StreamClient::getUiController() const
 
 void StreamClient::checkClient(QString username, QString password)
 {
+
     auto error = Authentificate::checkLogin(username, password);
     switch (error)
     {

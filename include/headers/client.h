@@ -19,7 +19,7 @@ private:
     int id = 0;
     qint64 sizeFile = 0;
     std::unique_ptr<Receiver> receiver;
-
+    QHostAddress address;
     QString current_path;
     QString fileName = "";
 
@@ -29,6 +29,8 @@ public:
     void connecting();
 
     std::unique_ptr<Sender> sender;
+    void setAddress(const QHostAddress &value);
+
 public slots:
     void slotRead();
     void requestFile(QString file_name);

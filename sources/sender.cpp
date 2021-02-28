@@ -19,11 +19,10 @@ void Sender::discardSocket()
     socket->deleteLater();
 }
 
-
 void Sender::connecting()
 {
     socket->reset();
-    socket->connectToHost(QHostAddress::LocalHost, 6002);
+    socket->connectToHost(address, 6002);
 }
 
 void Sender::sendFile(QString file_path, bool isPrivate)
@@ -46,4 +45,9 @@ void Sender::sendFile(QString file_path, bool isPrivate)
     QString name = list.at(list.size() - 1);
     emit fileSent(file.size(), name, isPrivate);
     qDebug() << file.size();
+}
+
+void Sender::setAddress(const QHostAddress &value)
+{
+    address = value;
 }

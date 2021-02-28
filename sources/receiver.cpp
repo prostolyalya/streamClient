@@ -39,10 +39,15 @@ void Receiver::slotDisconnected()
     socket->deleteLater();
 }
 
+void Receiver::setAddress(const QHostAddress &value)
+{
+    address = value;
+}
+
 void Receiver::connecting()
 {
     socket->reset();
-    socket->connectToHost(QHostAddress::LocalHost, 6001);
+    socket->connectToHost(address, 6001);
 }
 
 void Receiver::clearTmpFile()

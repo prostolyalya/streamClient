@@ -2,12 +2,14 @@
 #define STREAMCLIENT_H
 #pragma once
 
-#include "client.h"
-#include "ui_controller.h"
 #include <QTcpSocket>
 #include <QQmlApplicationEngine>
+
+#include "client.h"
+#include "ui_controller.h"
 #include "authentificator.h"
 #include "thread_pool.h"
+
 class StreamClient : public QObject
 {
     Q_OBJECT
@@ -25,7 +27,7 @@ private:
     std::unique_ptr<Client> client;
     std::unique_ptr<ThreadPool> thread_pool;
     std::shared_ptr<UiController> uiController;
-
+    QHostAddress address;
     void init();
 signals:
     void initClient();

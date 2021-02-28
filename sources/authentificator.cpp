@@ -6,7 +6,7 @@
 Authentificate::Error Authentificate::checkName(QString username, QString password)
 {
     QTcpSocket socket;
-    socket.connectToHost(QHostAddress::LocalHost, 6003);
+    socket.connectToHost(address, 6003);
     socket.waitForConnected(3000);
     if (socket.state() == QTcpSocket::ConnectedState)
     {
@@ -16,8 +16,7 @@ Authentificate::Error Authentificate::checkName(QString username, QString passwo
     {
         return Authentificate::Error::NO_CONNECTION;
     }
-    const char* data =
-        "registration_user/" + username.toLatin1() + "/" + password.toLatin1();
+    const char* data = "registration_user/" + username.toLatin1() + "/" + password.toLatin1();
     socket.write(data);
     while (socket.waitForBytesWritten(100)) { }
     while (!socket.waitForReadyRead()) { }
@@ -35,7 +34,7 @@ Authentificate::Error Authentificate::checkName(QString username, QString passwo
 Authentificate::Error Authentificate::checkLogin(QString username, QString password)
 {
     QTcpSocket socket;
-    socket.connectToHost(QHostAddress::LocalHost, 6003);
+    socket.connectToHost(address, 6003);
     socket.waitForConnected(3000);
     if (socket.state() == QTcpSocket::ConnectedState)
     {

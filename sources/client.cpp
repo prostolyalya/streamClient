@@ -1,23 +1,29 @@
 #include "client.h"
 #include "thread_pool.h"
-Client::Client(int id, QObject *parent)
+Client::Client(QObject *parent)
     : QObject(parent)
-    , id(id)
 {
-    socket = std::make_unique<QTcpSocket>();
-    current_path = QDir::currentPath() + "/" + QString::number(id) + "/";
+    socket = std::make_unique<QTcpSocket>(this);
+    current_path = QDir::currentPath() + "/my/";
     QDir().mkdir(current_path);
     connect(socket.get(), &QTcpSocket::readyRead, this, &Client::slotRead);
     connect(socket.get(), &QTcpSocket::disconnected, this,
             &Client::slotServerDisconnected);
-    sender = std::make_unique<Sender>();
-    receiver = std::make_unique<Receiver>(current_path + "tmp");
+    sender = std::make_unique<Sender>(this);
+    receiver = std::make_unique<Receiver>(current_path + "tmp", this);
     connect(sender.get(), &Sender::fileSent, this, &Client::fileSent,
             Qt::QueuedConnection);
     connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile,
             Qt::QueuedConnection);
     connect(this, &Client::connectSender, sender.get(), &Sender::connecting,
             Qt::QueuedConnection);
+}
+
+void Client::setAddress(const QHostAddress &value)
+{
+    address = value;
+    sender->setAddress(value);
+    receiver->setAddress(value);
 }
 
 void Client::sendMessage(QString text)
@@ -59,10 +65,12 @@ void Client::saveFile()
 void Client::connecting()
 {
     socket.get()->reset();
-    socket.get()->connectToHost(QHostAddress::LocalHost, 6000);
+    socket.get()->connectToHost(address, 6000);
     socket->waitForConnected(3000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
+        if (!receiver || !sender)
+            return;
         emit connectSender();
         receiver.get()->connecting();
         emit messageReceived("Connected to server");

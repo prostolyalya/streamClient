@@ -4,6 +4,7 @@
 #include <QTcpSocket>
 #include <QObject>
 #include <QFile>
+#include <QHostAddress>
 class Receiver : public QObject
 {
     Q_OBJECT
@@ -14,13 +15,16 @@ public:
     void clearTmpFile();
     QString tmp_path = "";
     qint64 file_size = 0;
-    void setReceiver_socket(QTcpSocket* value);
     std::unique_ptr<QFile> file;
+
+    void setAddress(const QHostAddress& value);
+
 public slots:
     void slotRead();
     void slotDisconnected();
 
 private:
     std::unique_ptr<QTcpSocket> socket;
+    QHostAddress address;
 };
 #endif // RECEIVER_H

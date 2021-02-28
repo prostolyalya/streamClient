@@ -1,5 +1,6 @@
 #ifndef AUTHENTIFICATOR_H
 #define AUTHENTIFICATOR_H
+#include <QHostAddress>
 #include <QString>
 namespace Authentificate {
 enum Error {
@@ -10,6 +11,7 @@ enum Error {
 };
     Error checkName(QString username, QString password);
     Error checkLogin(QString username, QString password);
+    const QHostAddress address("192.168.0.106");
 }
 
 #endif // AUTHENTIFICATOR_H

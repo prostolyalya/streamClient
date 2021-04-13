@@ -71,3 +71,15 @@ Thumbs.db
 *.exe
 
 *.txt.user
+*.json
+*.lock
+*.ninja
+*.ninja_deps
+*.ninja_log
+*.out
+*.txt
+*.cmake
+*.check_cache
+*.bin
+*.log
+*.txt.user.4deffa2

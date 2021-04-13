@@ -17,12 +17,19 @@ void UiController::addText(QString text)
 
 void UiController::responceFileList(QStringList list, QStringList listPub)
 {
+    if (!list.empty())
+    {
+        list.removeAt(0);
+    }
+    if (!listPub.empty())
+    {
+        listPub.removeAt(0);
+    }
     listFiles.clear();
-    list.removeAt(0);
     listFiles = list;
     emit listFilesChanged();
+
     listPublicFiles.clear();
-    listPub.removeAt(0);
     listPublicFiles = listPub;
     emit listPublicFilesChanged();
 }
@@ -88,4 +95,3 @@ int UiController::getFilesSize() const
 {
     return listFiles.size();
 }
-

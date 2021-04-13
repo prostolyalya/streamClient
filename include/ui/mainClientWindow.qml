@@ -1,8 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.15
-import Qt.labs.platform 1.1
 import QtQml.Models 2.15
 import QtMultimedia 5.12
+import QtQuick.Dialogs 1.3
 
 ApplicationWindow
 {
@@ -289,8 +289,8 @@ ApplicationWindow
         id: fileDialog
         title: "Please choose a file"
         onAccepted: {
-            console.log("You chose: " + fileDialog.currentFile)
-            uiController.sendFile(fileDialog.currentFile, isPrivate)
+            console.log("You chose: " + fileDialog.fileUrl)
+            uiController.sendFile(fileDialog.fileUrl, isPrivate)
         }
         onRejected: {
             fileDialog.close()

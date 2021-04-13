@@ -44,17 +44,17 @@ set(HDRS_LIST
     "include/headers/authentificator.h"
     "qml.qrc"
 )
-#set(CMAKE_PREFIX_PATH "/home/main/Qt/5.15.0/gcc_64/lib/cmake")
-find_package(Qt5 REQUIRED COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia)
-#find_package(Boost COMPONENTS thread system REQUIRED)
-#include_directories(include/lib/boost)
-#include_directories(${Boost_INCLUDE_DIR})
+
+find_package(QT NAMES Qt5 COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia REQUIRED)
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia REQUIRED)
+
+#find_package(Qt5 REQUIRED COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia)
 add_executable(streamClient
   main.cpp
   ${SRC_LIST}
   ${HDRS_LIST}
 )
-#target_compile_definitions(streamClient
-#  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-target_link_libraries(streamClient Qt::Core Qt::Network Qt::Qml Qt::Quick Qt::Widgets Qt::Multimedia Qt::MultimediaWidgets)#${Boost_LIBRARIES}
+
+target_link_libraries(streamClient Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Multimedia Qt${QT_VERSION_MAJOR}::MultimediaWidgets)
 target_include_directories(streamClient PUBLIC include)

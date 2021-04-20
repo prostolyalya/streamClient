@@ -300,6 +300,7 @@ ApplicationWindow
         id: videoWindow
         width : 1000
         height : 800
+        color: "black"
         Rectangle
         {
             id: buttonChose
@@ -331,7 +332,6 @@ ApplicationWindow
             id: video
             anchors.fill: parent
             z:2
-
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
@@ -349,8 +349,8 @@ ApplicationWindow
             id: fileDialogVideo
             title: "Please choose a file"
             onAccepted: {
-                console.log("You chose: " + fileDialogVideo.currentFile)
-                video.source = "file://" + fileDialogVideo.currentFile
+                console.log("You chose: " + fileDialogVideo.fileUrl)
+                video.source = "file://" + fileDialogVideo.fileUrl
             }
             onRejected: {
                 fileDialogVideo.close()

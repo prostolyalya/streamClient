@@ -38,7 +38,7 @@ void StreamClient::init()
             Qt::QueuedConnection);
     ThreadPool::getInstance()->addToThread(this);
     ThreadPool::getInstance()->addToThread(client.get());
-    ThreadPool::getInstance()->addToThread(client.get()->sender.get());
+//    ThreadPool::getInstance()->addToThread(client.get()->sender.get());
 
     emit initClient();
 }

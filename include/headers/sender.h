@@ -12,12 +12,13 @@ public:
     Sender(QObject *parent = nullptr);
 
     void setAddress(const QHostAddress &value);
-
+    QTcpSocket::SocketState socketState();
 public slots:
     void connecting();
     void readSocket();
     void discardSocket();
     void sendFile(QString file_path, bool isPrivate);
+    void errorSocket(QAbstractSocket::SocketError err);
 signals:
     void fileSent(qint64, QString, bool);
 

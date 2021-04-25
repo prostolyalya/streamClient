@@ -11,7 +11,6 @@ class Receiver : public QObject
 public:
     Receiver(QString path, QObject* parent = nullptr);
     ~Receiver();
-    void connecting();
     void clearTmpFile();
     QString tmp_path = "";
     qint64 file_size = 0;
@@ -19,10 +18,12 @@ public:
 
     void setAddress(const QHostAddress& value);
 
+    QTcpSocket::SocketState socketState();
 public slots:
+    void connecting();
     void slotRead();
     void slotDisconnected();
-
+    void errorSocket(QAbstractSocket::SocketError err);
 private:
     std::unique_ptr<QTcpSocket> socket;
     QHostAddress address;

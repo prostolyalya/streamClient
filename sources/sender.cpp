@@ -6,6 +6,7 @@ Sender::Sender(QObject *parent)
     socket = std::make_unique<QTcpSocket>();
     connect(socket.get(), &QTcpSocket::readyRead, this, &Sender::readSocket);
     connect(socket.get(), &QTcpSocket::disconnected, this, &Sender::discardSocket);
+    connect(socket.get(), &QTcpSocket::errorOccurred, this , &Sender::errorSocket);
 }
 
 void Sender::readSocket()
@@ -16,12 +17,11 @@ void Sender::readSocket()
 
 void Sender::discardSocket()
 {
-    socket->deleteLater();
+    socket->reset();
 }
 
 void Sender::connecting()
 {
-    socket->reset();
     socket->connectToHost(address, 6002);
 }
 
@@ -47,7 +47,17 @@ void Sender::sendFile(QString file_path, bool isPrivate)
     qDebug() << file.size();
 }
 
+void Sender::errorSocket(QAbstractSocket::SocketError err)
+{
+    qDebug() << "ERROR sender" << err;
+}
+
 void Sender::setAddress(const QHostAddress &value)
 {
     address = value;
+}
+
+QAbstractSocket::SocketState Sender::socketState()
+{
+    return socket->state();
 }

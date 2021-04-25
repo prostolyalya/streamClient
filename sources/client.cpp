@@ -7,16 +7,13 @@ Client::Client(QObject *parent)
     current_path = QDir::currentPath() + "/my/";
     QDir().mkdir(current_path);
     connect(socket.get(), &QTcpSocket::readyRead, this, &Client::slotRead);
-    connect(socket.get(), &QTcpSocket::disconnected, this,
-            &Client::slotServerDisconnected);
+    connect(socket.get(), &QTcpSocket::disconnected, this, &Client::slotServerDisconnected);
     sender = std::make_unique<Sender>(this);
     receiver = std::make_unique<Receiver>(current_path + "tmp", this);
-    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent,
-            Qt::QueuedConnection);
-    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile,
-            Qt::QueuedConnection);
-    connect(this, &Client::connectSender, sender.get(), &Sender::connecting,
-            Qt::QueuedConnection);
+    connect(sender.get(), &Sender::fileSent, this, &Client::fileSent, Qt::QueuedConnection);
+    connect(this, &Client::sendFileSignal, sender.get(), &Sender::sendFile, Qt::QueuedConnection);
+    connect(this, &Client::connectSender, sender.get(), &Sender::connecting, Qt::QueuedConnection);
+    connect(this, &Client::connectReceiver, receiver.get(), &Receiver::connecting, Qt::QueuedConnection);
 }
 
 void Client::setAddress(const QHostAddress &value)
@@ -48,8 +45,7 @@ void Client::saveFile()
         if (file.open(QFile::ReadOnly))
         {
             QFile::copy(current_path + "tmp", current_path + fileName);
-            emit messageReceived("File received: " + current_path.toUtf8()
-                                 + fileName.toUtf8());
+            emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
         }
         else
         {
@@ -64,23 +60,24 @@ void Client::saveFile()
 
 void Client::connecting()
 {
-    socket.get()->reset();
-    socket.get()->connectToHost(address, 6000);
-    socket->waitForConnected(3000);
+    socket->connectToHost(address, 6000);
+    socket->waitForConnected(2000);
     if (socket->state() == QTcpSocket::ConnectedState)
     {
         if (!receiver || !sender)
             return;
         emit connectSender();
-        receiver.get()->connecting();
-        emit messageReceived("Connected to server");
-        requestFileList();
+        emit connectReceiver();
+        if (receiver.get()->socketState() == QTcpSocket::ConnectedState
+            && sender.get()->socketState() == QTcpSocket::ConnectedState)
+        {
+            emit messageReceived("Connected to server");
+            requestFileList();
+            return;
+        }
     }
-    else
-    {
-        emit messageReceived("Can`t connect to server, reconnecting...");
-        QTimer::singleShot(3000, this, &Client::connecting);
-    }
+    emit messageReceived("Can`t connect to server, reconnecting...");
+    QTimer::singleShot(3000, this, &Client::connecting);
 }
 
 void Client::init()
@@ -129,14 +126,14 @@ void Client::requestFile(QString file_name)
 void Client::slotServerDisconnected()
 {
     emit messageReceived("Failed connect to server, reconnecting...");
+    socket->reset();
     connecting();
 }
 
 void Client::fileSent(qint64 size, QString fileName, bool isPrivate)
 {
     char priv = isPrivate ? '1' : '0';
-    socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8()
-                  + "/" + priv);
+    socket->write("end_of_file/" + QByteArray::number(size) + "/" + fileName.toUtf8() + "/" + priv);
     emit messageReceived("File sent: " + fileName.toUtf8());
     QTimer::singleShot(1000, this, &Client::requestFileList);
 }

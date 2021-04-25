@@ -21,9 +21,7 @@ private:
     QHostAddress address;
     QString current_path;
     QString fileName = "";
-
     void saveFile();
-
 public:
     void connecting();
 
@@ -43,8 +41,8 @@ public slots:
 signals:
     void responseFileList(QStringList, QStringList);
     void connectSender();
+    void connectReceiver();
     void sendFileSignal(QString path, bool isPrivate);
-    void clientDisconnect(int id);
     void messageReceived(QByteArray msg);
 };
 #endif // CLIENT_H

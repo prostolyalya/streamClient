@@ -13,6 +13,7 @@ Receiver::Receiver(QString path, QObject *parent)
     file = std::make_unique<QFile>(tmp_path);
     file.get()->open(QIODevice::Append | QIODevice::WriteOnly);
     file->resize(0);
+    connect(socket.get(), &QTcpSocket::errorOccurred, this , &Receiver::errorSocket);
 }
 
 Receiver::~Receiver()
@@ -36,7 +37,12 @@ void Receiver::slotRead()
 void Receiver::slotDisconnected()
 {
     socket->reset();
-    socket->deleteLater();
+//    socket->deleteLater();
+}
+
+void Receiver::errorSocket(QAbstractSocket::SocketError err)
+{
+    qDebug() << "ERROR receiver" << err;
 }
 
 void Receiver::setAddress(const QHostAddress &value)
@@ -44,9 +50,13 @@ void Receiver::setAddress(const QHostAddress &value)
     address = value;
 }
 
+QAbstractSocket::SocketState Receiver::socketState()
+{
+    return socket->state();
+}
+
 void Receiver::connecting()
 {
-    socket->reset();
     socket->connectToHost(address, 6001);
 }
 

@@ -17,14 +17,6 @@ void UiController::addText(QString text)
 
 void UiController::responceFileList(QStringList list, QStringList listPub)
 {
-    if (!list.empty())
-    {
-        list.removeAt(0);
-    }
-    if (!listPub.empty())
-    {
-        listPub.removeAt(0);
-    }
     listFiles.clear();
     listFiles = list;
     emit listFilesChanged();
@@ -44,6 +36,22 @@ void UiController::loginError(QString error)
 {
     errorText = error;
     emit errorTextChanged();
+}
+
+void UiController::fileReceived(QString path)
+{
+    setVideoFilePath(path);
+}
+
+QString UiController::getVideoFilePath() const
+{
+    return videoFilePath;
+}
+
+void UiController::setVideoFilePath(const QString &value)
+{
+    videoFilePath = value;
+    emit playerFilePathChanged();
 }
 
 QStringList UiController::getListPublicFiles() const

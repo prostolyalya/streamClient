@@ -4,7 +4,6 @@ StreamClient::StreamClient(QQmlApplicationEngine& _engine, QObject* parent)
     : QObject(parent)
     , engine(_engine)
 {
-    thread_pool = std::make_unique<ThreadPool>();
     uiController = std::make_shared<UiController>();
     connect(uiController.get(), &UiController::login, this, &StreamClient::checkClient);
     connect(uiController.get(), &UiController::registration, this,
@@ -13,6 +12,8 @@ StreamClient::StreamClient(QQmlApplicationEngine& _engine, QObject* parent)
             &UiController::loginError);
     connect(this, &StreamClient::loginComplete, uiController.get(),
             &UiController::registrationComplete);
+
+    uiController->setVideoFilePath(QDir::currentPath() + "/my/tmp");
     address = Authentificate::address;
 }
 
@@ -36,6 +37,8 @@ void StreamClient::init()
             &UiController::responceFileList, Qt::QueuedConnection);
     connect(uiController.get(), &UiController::sendFile, client.get(), &Client::sendFile,
             Qt::QueuedConnection);
+    connect(client.get(), &Client::fileReceived, uiController.get(),
+            &UiController::fileReceived, Qt::QueuedConnection);
     ThreadPool::getInstance()->addToThread(this);
     ThreadPool::getInstance()->addToThread(client.get());
 //    ThreadPool::getInstance()->addToThread(client.get()->sender.get());

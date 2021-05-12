@@ -44,5 +44,6 @@ signals:
     void connectReceiver();
     void sendFileSignal(QString path, bool isPrivate);
     void messageReceived(QByteArray msg);
+    void fileReceived(QString path);
 };
 #endif // CLIENT_H

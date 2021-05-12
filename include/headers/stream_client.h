@@ -24,7 +24,6 @@ public slots:
 private:
     QQmlApplicationEngine &engine;
     std::unique_ptr<Client> client;
-    std::unique_ptr<ThreadPool> thread_pool;
     std::shared_ptr<UiController> uiController;
     QHostAddress address;
     void init();

@@ -11,7 +11,7 @@ enum Error {
 };
     Error checkName(QString username, QString password);
     Error checkLogin(QString username, QString password);
-    const QHostAddress address("192.168.0.103");
+    const QHostAddress address("192.168.0.106");
 }
 
 #endif // AUTHENTIFICATOR_H

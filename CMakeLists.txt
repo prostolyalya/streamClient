@@ -20,7 +20,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/headers
     ${CMAKE_CURRENT_SOURCE_DIR}/sources
 )
-#/home/ykulevskyi/Qt/6.0.0/gcc_64/lib/cmake/Qt6
+
 set(SRC_LIST
     "sources/thread_pool.cpp"
     "sources/client.cpp"
@@ -28,7 +28,6 @@ set(SRC_LIST
     "sources/sender.cpp"
     "sources/ui_controller.cpp"
     "sources/stream_client.cpp"
-    "sources/cryptor.cpp"
     "sources/serializer.cpp"
     "sources/authentificator.cpp"
 )
@@ -39,7 +38,6 @@ set(HDRS_LIST
     "include/headers/receiver.h"
     "include/headers/stream_client.h"
     "include/headers/ui_controller.h"
-    "include/headers/cryptor.h"
     "include/headers/serializer.h"
     "include/headers/authentificator.h"
     "qml.qrc"
@@ -49,7 +47,6 @@ find_package(QT NAMES Qt5 COMPONENTS Core Network Qml Quick MultimediaWidgets Wi
 
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia REQUIRED)
 
-#find_package(Qt5 REQUIRED COMPONENTS Core Network Qml Quick MultimediaWidgets Widgets Multimedia)
 add_executable(streamClient
   main.cpp
   ${SRC_LIST}

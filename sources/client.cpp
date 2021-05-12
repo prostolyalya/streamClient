@@ -1,5 +1,7 @@
 #include "client.h"
 #include "thread_pool.h"
+#include "serializer.h"
+
 Client::Client(QObject *parent)
     : QObject(parent)
 {
@@ -46,6 +48,7 @@ void Client::saveFile()
         {
             QFile::copy(current_path + "tmp", current_path + fileName);
             emit messageReceived("File received: " + current_path.toUtf8() + fileName.toUtf8());
+            emit fileReceived(current_path.toUtf8() + fileName.toUtf8());
         }
         else
         {
@@ -101,16 +104,11 @@ void Client::slotRead()
         }
         else if (array.startsWith("response_list_file"))
         {
-            QByteArrayList list = array.split('&');
-            QString data = list.at(1);
-            QStringList listNames = data.split('/');
-            QStringList listPubNames;
-            if (list.size() > 2)
-            {
-                QString dataPub = list.at(2);
-                listPubNames = dataPub.split("//");
-            }
-            emit responseFileList(listNames, listPubNames);
+            QString names = array;
+            QStringList list = names.split("//");
+            QStringList data_priv = Serialize::deserialize(list.at(1));
+            QStringList data_pub = Serialize::deserialize(list.at(2));
+            emit responseFileList(data_priv, data_pub);
         }
         else
             emit messageReceived("From server:" + array);

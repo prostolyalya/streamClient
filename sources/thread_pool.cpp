@@ -1,14 +1,13 @@
 #include "thread_pool.h"
 #include <QDebug>
 
-ThreadPool* ThreadPool::instance = nullptr;
+ThreadPool* ThreadPool::instance = new ThreadPool();
 
- ThreadPool::ThreadPool()
+ThreadPool::ThreadPool()
 {
 //    pool = new QThreadPool();
 //    uint8_t count_threads = std::thread::hardware_concurrency();
 //    pool->setMaxThreadCount(count_threads - 1);
-    instance = this;
 }
 
  ThreadPool *ThreadPool::getInstance()
@@ -35,7 +34,7 @@ QThread *ThreadPool::addToThread(QObject* object)
 {
     QThread* thread = new QThread();
     connect(thread, &QThread::finished, object, &QObject::deleteLater);
-    pool.insert(thread);
+    instance->pool.insert(thread);
     object->moveToThread(thread);
     thread->start();
     return thread;

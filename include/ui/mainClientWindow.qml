@@ -266,14 +266,14 @@ ApplicationWindow
        anchors.top: buttonRefresh.bottom
        anchors.left: buttonRefresh.left
        anchors.topMargin: 5
-       width: 100
+       width: 170
        height: 30
        color: "yellow"
        border.width: 1
        border.color: "black"
        Text {
            anchors.centerIn: parent
-           text: qsTr("->")
+           text: qsTr("Watch loading file")
        }
 
        MouseArea
@@ -282,6 +282,7 @@ ApplicationWindow
             onClicked:
             {
                 videoWindow.show()
+                video.source = "file://" + uiController.playerFilePath
             }
        }
     }
@@ -303,7 +304,7 @@ ApplicationWindow
         color: "black"
         Rectangle
         {
-            id: buttonChose
+           id: buttonChose
            anchors.top: parent.top
            anchors.left: parent.left
            anchors.topMargin: 5
@@ -338,6 +339,9 @@ ApplicationWindow
                     video.playbackState === MediaPlayer.PlayingState ? video.pause() : video.play()
                     video.playbackState === MediaPlayer.PlayingState ? buttonChose.visible = false: buttonChose.visible = true
                 }
+            }
+            onStopped: {
+                video.source = "file://" + uiController.playerFilePath
             }
 
             focus: true

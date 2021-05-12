@@ -1,12 +1,27 @@
 #include "serializer.h"
 
-void Serialize::serializeMessage(QByteArray &data)
+QString Serialize::serialize(QStringList data)
 {
-    int size = data.size();
-    QByteArray data_size = QByteArray::number(size);
-    if(QByteArray::number(size).size() == 1)
+    QString res = "";
+    for(const auto& tmp : data)
     {
-        data_size.push_front("0");
+        res += QString::number(tmp.size()) + "/" + tmp;
     }
-    data = data_size + data;
+    return res;
+}
+
+QStringList Serialize::deserialize(QString data)
+{
+    QStringList list;
+    while(!data.isEmpty())
+    {
+        int pos = data.indexOf("/");
+        if (pos == -1)
+            return list;
+        int size = data.midRef(0, pos).toInt();
+        QString name = data.mid(pos + 1, size);
+        list.append(name);
+        data.remove(0, pos + size + 1);
+    }
+    return list;
 }

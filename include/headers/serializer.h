@@ -1,9 +1,11 @@
 #ifndef SERIALIZER_H
 #define SERIALIZER_H
 #pragma once
-#include <QByteArray>
+#include <QStringList>
+
 namespace Serialize {
-    void serializeMessage(QByteArray& data);
+    QString serialize(QStringList data);
+    QStringList deserialize(QString data);
 }
 
 #endif // SERIALIZER_H
